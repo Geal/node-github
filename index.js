@@ -764,6 +764,7 @@ var Client = module.exports = function(config) {
                 }
                 if(err || response === undefined) {
                     callCallback(err);
+                    return;
                 }
                 //response.setEncoding("utf8");
 
