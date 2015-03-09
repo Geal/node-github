@@ -661,28 +661,6 @@ var Client = module.exports = function(config) {
         var protocol = this.config.protocol || this.constants.protocol || "http";
         var host = block.host || this.config.host || this.constants.host;
         var port = this.config.port || this.constants.port || (protocol == "https" ? 443 : 80);
-        var proxyUrl;
-        if (this.config.proxy !== undefined) {
-            proxyUrl = this.config.proxy;
-        } else {
-            proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
-        }
-        if (proxyUrl) {
-            path = Url.format({
-                protocol: protocol,
-                hostname: host,
-                port: port,
-                pathname: path
-            });
-
-            if (!/^(http|https):\/\//.test(proxyUrl))
-                proxyUrl = "https://" + proxyUrl;
-
-            var parsedUrl = Url.parse(proxyUrl);
-            protocol = parsedUrl.protocol.replace(":", "");
-            host = parsedUrl.hostname;
-            port = parsedUrl.port || (protocol == "https" ? 443 : 80);
-        }
         if (!hasBody && query.length)
             path += "?" + query.join("&");
 
@@ -762,6 +740,12 @@ var Client = module.exports = function(config) {
 
         if (this.config.rejectUnauthorized !== undefined)
             options.rejectUnauthorized = this.config.rejectUnauthorized;
+
+        if (this.config.proxy !== undefined) {
+            options.proxy = this.config.proxy;
+        } else {
+            options.proxy = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+        }
 
         if (this.debug)
             console.log("REQUEST: ", options);
