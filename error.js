@@ -26,7 +26,7 @@ Util.inherits(exports.HttpError, Error);
      *  Returns the stringified version of the error (i.e. the message).
      **/
     this.toString = function() {
-        return this.message;
+        return this.message + '(' + this.code + ')';
     };
     
     /**
