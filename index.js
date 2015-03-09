@@ -741,10 +741,14 @@ var Client = module.exports = function(config) {
         if (this.config.rejectUnauthorized !== undefined)
             options.rejectUnauthorized = this.config.rejectUnauthorized;
 
+        var proxyUrl;
         if (this.config.proxy !== undefined) {
-            options.proxy = this.config.proxy;
+            proxyUrl = this.config.proxy;
         } else {
-            options.proxy = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+            proxyUrl = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+        }
+        if(proxyUrl != undefined) {
+          options.proxy = proxyUrl;
         }
 
         if (this.debug)
