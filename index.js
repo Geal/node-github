@@ -757,18 +757,19 @@ var Client = module.exports = function(config) {
         function httpSendRequest() {
             //var req = require(protocol).request(options, function(res) {
             var data = "";
-            var req = rs(options, function(error, response, body) {
+            var req = rs(options, function(err, response, body) {
                 if (self.debug) {
                     console.log("STATUS: " + response.statusCode);
                     console.log("HEADERS: " + JSON.stringify(response.headers));
                 }
-                if(error) {
+                if(err) {
                     callCallback(err);
                 }
                 response.setEncoding("utf8");
 
                 if (response.statusCode >= 400 && response.statusCode < 600 || response.statusCode < 10) {
                     callCallback(new error.HttpError(body, response.statusCode));
+                    callCallback(response);
                 } else {
                     response.data = body;
                     callCallback(null, response);
