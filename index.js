@@ -762,7 +762,7 @@ var Client = module.exports = function(config) {
                     console.log("STATUS: " + response.statusCode);
                     console.log("HEADERS: " + JSON.stringify(response.headers));
                 }
-                if(err) {
+                if(err || response === undefined) {
                     callCallback(err);
                 }
                 //response.setEncoding("utf8");
