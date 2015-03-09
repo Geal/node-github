@@ -765,7 +765,7 @@ var Client = module.exports = function(config) {
                 if(err) {
                     callCallback(err);
                 }
-                response.setEncoding("utf8");
+                //response.setEncoding("utf8");
 
                 if (response.statusCode >= 400 && response.statusCode < 600 || response.statusCode < 10) {
                     callCallback(new error.HttpError(body, response.statusCode));
