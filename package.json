@@ -16,7 +16,8 @@
         "node": ">=0.4.0"
     },
     "dependencies": {
-      "mime": "^1.2.11"
+      "mime": "^1.2.11",
+      "request": "^2.53.0"
     },
     "devDependencies": {
         "oauth": "~0.9.7",

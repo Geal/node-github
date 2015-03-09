@@ -5,6 +5,7 @@ var fs = require("fs");
 var mime = require("mime");
 var Util = require("./util");
 var Url = require("url");
+var rs = require("request");
 
 /** section: github
  * class Client
@@ -748,11 +749,14 @@ var Client = module.exports = function(config) {
         if (!("accept" in headers))
             headers.accept = this.config.requestMedia || this.constants.requestMedia;
 
+        var timeout = (block.timeout !== undefined) ? block.timeout : self.config.timeout;
         var options = {
             host: host,
             port: port,
             path: path,
             method: method,
+            uri: "https://"+host+path,
+            timeout: timeout,
             headers: headers
         };
 
@@ -763,33 +767,25 @@ var Client = module.exports = function(config) {
             console.log("REQUEST: ", options);
 
         function httpSendRequest() {
-            var req = require(protocol).request(options, function(res) {
+            //var req = require(protocol).request(options, function(res) {
+            var data = "";
+            var req = rs(options, function(error, response, body) {
                 if (self.debug) {
-                    console.log("STATUS: " + res.statusCode);
-                    console.log("HEADERS: " + JSON.stringify(res.headers));
+                    console.log("STATUS: " + response.statusCode);
+                    console.log("HEADERS: " + JSON.stringify(response.headers));
                 }
-                res.setEncoding("utf8");
-                var data = "";
-                res.on("data", function(chunk) {
-                    data += chunk;
-                });
-                res.on("error", function(err) {
+                if(error) {
                     callCallback(err);
-                });
-                res.on("end", function() {
-                    if (res.statusCode >= 400 && res.statusCode < 600 || res.statusCode < 10) {
-                        callCallback(new error.HttpError(data, res.statusCode));
-                    } else {
-                        res.data = data;
-                        callCallback(null, res);
-                    }
-                });
-            });
+                }
+                response.setEncoding("utf8");
 
-            var timeout = (block.timeout !== undefined) ? block.timeout : self.config.timeout;
-            if (timeout) {
-                req.setTimeout(timeout);
-            }
+                if (response.statusCode >= 400 && response.statusCode < 600 || response.statusCode < 10) {
+                    callCallback(new error.HttpError(body, response.statusCode));
+                } else {
+                    response.data = body;
+                    callCallback(null, response);
+                }
+            });
 
             req.on("error", function(e) {
                 if (self.debug)
