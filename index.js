@@ -758,15 +758,15 @@ var Client = module.exports = function(config) {
             //var req = require(protocol).request(options, function(res) {
             var data = "";
             var req = rs(options, function(err, response, body) {
-                if (self.debug) {
-                    console.log("STATUS: " + response.statusCode);
-                    console.log("HEADERS: " + JSON.stringify(response.headers));
-                }
                 if(err || response === undefined) {
                     callCallback(err);
                     return;
                 }
-                //response.setEncoding("utf8");
+
+                if (self.debug) {
+                    console.log("STATUS: " + response.statusCode);
+                    console.log("HEADERS: " + JSON.stringify(response.headers));
+                }
 
                 if (response.statusCode >= 400 && response.statusCode < 600 || response.statusCode < 10) {
                     callCallback(new error.HttpError(body, response.statusCode));
